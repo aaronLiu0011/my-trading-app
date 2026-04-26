@@ -1,20 +1,29 @@
 package com.aaron.tradingapp.model;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "stocks")
 public class Stock {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false, unique = true)
     private String ticker;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exchange_market", nullable = false)
     private Market exchangeMarket;
 
+    @Column(name = "shares_issued")
     private Long sharesIssued;
 
+    @Column(name = "sector33_id")
     private Long sector33Id;
 
     public Stock() {
