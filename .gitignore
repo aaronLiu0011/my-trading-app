@@ -1,0 +1,18 @@
+# --- Java / Gradle ---
+.gradle/
+build/
+bin/
+out/
+.idea/
+*.iml
+.vscode/
+
+# --- Node / React ---
+node_modules/
+dist/
+.eslintcache
+*.log
+
+# --- OS ---
+.DS_Store
+Thumbs.db
