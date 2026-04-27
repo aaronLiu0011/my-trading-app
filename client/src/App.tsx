@@ -2,13 +2,21 @@ import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 import { getStocks } from './api/stocks'
 import type { Stock } from './types/stock'
+import Form from './Form'
 
 function StockListPage() {
   const [stocks, setStocks] = useState<Stock[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const path = window.location.pathname
+
   useEffect(() => {
+    if (path === '/form' || /^\/form\/[^/]+$/.test(path)) {
+      setLoading(false)
+      return
+    }
+
     async function load() {
       try {
         setLoading(true)
@@ -20,8 +28,18 @@ function StockListPage() {
         setLoading(false)
       }
     }
+
     load()
-  }, [])
+  }, [path])
+
+  if (path === '/form') {
+    return <Form />
+  }
+
+  const formPathMatch = path.match(/^\/form\/([^/]+)$/)
+  if (formPathMatch) {
+    return <Form ticker={decodeURIComponent(formPathMatch[1])} />
+  }
 
   return (
     <main style={{ padding: 24 }}>
