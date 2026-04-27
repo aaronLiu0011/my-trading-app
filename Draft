@@ -1,0 +1,27 @@
+@ManyToOne(fetch = FetchType.LAZY, optional = false)
+@JoinColumn(name = "stock_id", nullable = false)
+private Stock stock;
+
+repository
+@Query("select t from Trade t join fetch t.stock")
+List<Trade> findAllWithStock();
+
+dto
+public record TradeListItem(
+    Long tradeId,
+    Integer stockId,
+    String ticker,
+    String side,
+    BigDecimal quantity,
+    BigDecimal price
+) {}
+List<TradeListItem> result = tradeRepository.findAllWithStock().stream()
+    .map(t -> new TradeListItem(
+        t.getId(),
+        t.getStock().getId(),
+        t.getStock().getTicker(),
+        t.getSide(),
+        t.getQuantity(),
+        t.getPrice()
+    ))
+    .toList();
