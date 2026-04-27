@@ -73,81 +73,20 @@ function StockListPage() {
           </tbody>
         </table>
       )}
-
-      <p style={{ marginTop: 16 }}>
-        <a href="/form">Open blank form</a>
-      </p>
-    </main>
-  )
-}
-
-type StockFormPageProps = {
-  initialTicker?: string
-}
-
-function StockFormPage({ initialTicker }: StockFormPageProps) {
-  const [ticker, setTicker] = useState(initialTicker ?? '')
-  const [name, setName] = useState('')
-  const tickerLocked = Boolean(initialTicker)
-
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Stock Form</h1>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-        }}
-        style={{ display: 'grid', gap: 12, maxWidth: 360 }}
-      >
-        <label style={{ display: 'grid', gap: 6 }}>
-          <span>Ticker</span>
-          <input
-            value={ticker}
-            onChange={(e) => setTicker(e.target.value)}
-            readOnly={tickerLocked}
-            placeholder="e.g. AAPL"
-          />
-        </label>
-
-        <label style={{ display: 'grid', gap: 6 }}>
-          <span>Name</span>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Stock name"
-          />
-        </label>
-      </form>
-
-      <p style={{ marginTop: 16 }}>
-        <a href="/">Back to stock list</a>
-      </p>
     </main>
   )
 }
 
 function App() {
-  const route = useMemo(() => {
-    const path = window.location.pathname
+  const path = window.location.pathname
 
-    if (path === '/form') {
-      return { type: 'form' as const }
-    }
+  if (path === '/form') {
+    return <Form />
+  }
 
-    const match = path.match(/^\/form\/([^/]+)$/)
-    if (match) {
-      return {
-        type: 'form' as const,
-        ticker: decodeURIComponent(match[1]),
-      }
-    }
-
-    return { type: 'list' as const }
-  }, [])
-
-  if (route.type === 'form') {
-    return <StockFormPage initialTicker={route.ticker} />
+  const formPathMatch = path.match(/^\/form\/([^/]+)$/)
+  if (formPathMatch) {
+    return <Form ticker={decodeURIComponent(formPathMatch[1])} />
   }
 
   return <StockListPage />
