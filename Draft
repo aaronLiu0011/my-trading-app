@@ -14,14 +14,10 @@
     Open Form
   </Link>
 </td>
-
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 
 export default function Form() {
   const { ticker } = useParams();
-  const location = useLocation();
-
-  const nameFromState = location.state?.name ?? "";
 
   return (
     <div className="container mt-4">
@@ -44,7 +40,6 @@ export default function Form() {
           <input
             className="form-control"
             name="name"
-            defaultValue={nameFromState}
             placeholder="name"
           />
         </div>
@@ -56,3 +51,4 @@ export default function Form() {
     </div>
   );
 }
+
