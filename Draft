@@ -1,0 +1,58 @@
+<Route element={<Layout />}>
+  <Route path="/" element={<StockList />} />
+  <Route path="/stocks" element={<StockList />} />
+  <Route path="/trade" element={<TradeList />} />
+  <Route path="/stocks/new" element={<StockInputForm />} />
+  <Route path="/trade/new" element={<TradeInputForm />} />
+
+  <Route path="/form" element={<Form />} />
+  <Route path="/form/:ticker" element={<Form />} />
+</Route>
+
+<td>
+  <Link to={`/form/${encodeURIComponent(stock.ticker)}`}>
+    Open Form
+  </Link>
+</td>
+
+import { useLocation, useParams } from "react-router";
+
+export default function Form() {
+  const { ticker } = useParams();
+  const location = useLocation();
+
+  const nameFromState = location.state?.name ?? "";
+
+  return (
+    <div className="container mt-4">
+      <h2>Stock Form</h2>
+
+      <form>
+        <div className="mb-3">
+          <label className="form-label">Ticker</label>
+          <input
+            className="form-control"
+            name="ticker"
+            value={ticker ?? ""}
+            readOnly={!!ticker}
+            placeholder="ticker"
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Name</label>
+          <input
+            className="form-control"
+            name="name"
+            defaultValue={nameFromState}
+            placeholder="name"
+          />
+        </div>
+
+        <button className="btn btn-primary" type="submit">
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+}
