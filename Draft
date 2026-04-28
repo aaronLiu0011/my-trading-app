@@ -1,54 +1,36 @@
-<Route element={<Layout />}>
-  <Route path="/" element={<StockList />} />
-  <Route path="/stocks" element={<StockList />} />
-  <Route path="/trade" element={<TradeList />} />
-  <Route path="/stocks/new" element={<StockInputForm />} />
-  <Route path="/trade/new" element={<TradeInputForm />} />
+public Trade createTrade(TradeRequest request) {
 
-  <Route path="/form" element={<Form />} />
-  <Route path="/form/:ticker" element={<Form />} />
-</Route>
+    Map<String, String> errors = new HashMap<>();
 
-<td>
-  <Link to={`/form/${encodeURIComponent(stock.ticker)}`}>
-    Open Form
-  </Link>
-</td>
-import { useParams } from "react-router";
+    if (request.getQuantity() % 100 != 0) {
+        errors.put("quantity", "数量必须是 100 单位");
+    }
 
-export default function Form() {
-  const { ticker } = useParams();
+    DayOfWeek day = request.getTradeDate().getDayOfWeek();
+    if (day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) {
+        errors.put("tradeDate", "日期必须是工作日");
+    }
 
-  return (
-    <div className="container mt-4">
-      <h2>Stock Form</h2>
+    if (!errors.isEmpty()) {
+        throw new ValidationException(errors);
+    }
 
-      <form>
-        <div className="mb-3">
-          <label className="form-label">Ticker</label>
-          <input
-            className="form-control"
-            name="ticker"
-            value={ticker ?? ""}
-            readOnly={!!ticker}
-            placeholder="ticker"
-          />
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">Name</label>
-          <input
-            className="form-control"
-            name="name"
-            placeholder="name"
-          />
-        </div>
-
-        <button className="btn btn-primary" type="submit">
-          Submit
-        </button>
-      </form>
-    </div>
-  );
+    return tradeRepository.save(...);
 }
 
+public class ValidationException extends RuntimeException {
+    private final Map<String, String> errors;
+
+    public ValidationException(Map<String, String> errors) {
+        this.errors = errors;
+    }
+
+    public Map<String, String> getErrors() {
+        return errors;
+    }
+}
+
+@ExceptionHandler(ValidationException.class)
+public ResponseEntity<?> handleValidationException(ValidationException e) {
+    return ResponseEntity.badRequest().body(e.getErrors());
+}
